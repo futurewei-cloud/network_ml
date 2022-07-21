@@ -1,2 +1,5 @@
 # network_ml
-Network ML tools and framework
+This is a repository for network machine learning project. 
+Current topics:
+1) User Profile Classification
+2) Configuration Prediction
