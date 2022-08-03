@@ -1,3 +1,5 @@
+import os
+import sys
 #预处理脚本的输入
 #	具有按时间排序的混合所有流量的csv文件
 #	生成该流量的主机的ip list
@@ -9,7 +11,7 @@
 
 #Common path to the whole proyect
 #整个项目的共同路径
-main_path = 'G:/Anaconda/2'  
+main_path = os.path.dirname(os.getcwd())
 
 #Path to the modules folder. Must be a full path
 #模块文件夹的路径。必须是完整路径
@@ -36,6 +38,8 @@ OTHERS_POOL = ['20.{}.{}.{}'.format(x, y, z) for x in range(1, 5) for y in range
 #定义预处理脚本导出文件的路径
 export_path = '{}/data/preprocessed'.format(main_path)
 DATA_FILE = '{}/preprocessed.csv'.format(export_path)
+HOST_IP_MAP_FILE = '{}/host_ip_map_file.csv'.format(export_path)
+OTHER_IP_MAP_FILE = '{}/other_ip_map_file.csv'.format(export_path)
 
 #Time compresion factor. Set 1 for no compression
 #With a time compresion of 2. packets 1seg apart in the original file will be placed 0.5s apart

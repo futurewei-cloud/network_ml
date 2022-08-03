@@ -14,7 +14,7 @@ def main(config_module):
     
     anonym = Anonymizer(config_module.HOSTS_POOL, config_module.OTHERS_POOL)
 
-    host_list = {}
+    host_list = []
 
     cf = config_module.COMPRESSION_FACTOR
     #时间压缩因子。设置1表示无压缩
@@ -24,30 +24,40 @@ def main(config_module):
         f.readline()								#ignoramos la cabecera del csv 忽略CSV标头
         for line in f:
             p_data = line.split('\n')[0].split(',')
-            host_list['host_ip'] = p_data[0]
+            host_list.append(p_data[0])  
+            
+    with open(config_module.HOST_IP_MAP_FILE, 'w') as ipf:
 
-    anonym.add_host(host_list['host_ip'])
+        ipf.write('Original IP,Map IP\n')
+        for i in host_list:
+            IP_map=anonym.add_host(i)
+            k, v = IP_map.popitem()
+            ipf.write('{},{}\n'.format(k,v))
 
+    if config_module.VERBOSE : ecprint(config_module.HOST_IP_MAP_FILE, c='blue', template = 'saved host IP map file : {}')
 
-    with open(config_module.D_FILE, 'r') as f, open(config_module.DATA_FILE, 'w') as dstf:
+    with open(config_module.D_FILE, 'r') as f, open(config_module.DATA_FILE, 'w') as dstf, open(config_module.OTHER_IP_MAP_FILE, 'w') as ipf:
+        
+
+        ipf.write('Original IP,Map IP\n')
+        
         f.readline()								#ignoramos la cabecera del csv 忽略CSV标头
         for line in f:
             packet = Packet.from_csv_line(line)    #返回一个提取出来的数组TCP_Packet、UDP_Packet、IP_Packet
             if packet == None: continue						#error en el parser解析器错
 
-            anonym.anonimize(packet, original = host_list['host_ip'])      		#Anonimizamos las ips我们匿名的PSU
+            IP_map = anonym.anonimize(packet, host_list)      		#Anonimizamos las ips我们匿名的PSU
             #用新的ip数组代替了原来的 完成匿名化
             dstf.write(packet.as_csv_line())					#Append packets to the tmp file将数据包附加到tmp文件
+            if len(IP_map) > 0:
+                k, v = IP_map.popitem()
+                ipf.write('{},{}\n'.format(k,v))
+            else: continue
 
     if config_module.VERBOSE : ecprint(config_module.DATA_FILE, c='blue', template = 'saved merged traces : {}')
-
-    ##Save the target map --> address - activity
-    #if config_module.VERBOSE : ecprint('Saving targetmap', c='green')
-    #with open(config_module.TARGET_FILE, 'w') as f:
-    #    f.write('host,target\n')
-    #    for t in readed_traces:
-    #        f.write('{},{}\n'.format(t['host'], t['target']))
-    #if config_module.VERBOSE : ecprint(config_module.TARGET_FILE, c='blue', template = 'saved targets : {}')
+    if config_module.VERBOSE : ecprint(config_module.OTHER_IP_MAP_FILE, c='blue', template = 'saved other IP map file : {}')
+        
+    
 
 
 if __name__ == '__main__':

@@ -16,7 +16,8 @@
 #		生成该流量的主机的ip
 #		关联文件的名称
 #		该文件中的活动
-
+import os
+import sys
 
 #预处理脚本的输出
 #	合并所有流量的单个csv
@@ -26,7 +27,7 @@
 
 #Common path to the whole proyect
 #整个项目的共同路径
-main_path = 'G:/Anaconda/1'  
+main_path = os.path.dirname(os.getcwd())
 
 #Path to the modules folder. Must be a full path
 #模块文件夹的路径。必须是完整路径

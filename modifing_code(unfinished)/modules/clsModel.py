@@ -57,7 +57,7 @@ packetSizeStd_s,packetSizeStd_r,packetSizeRange_s,packetSizeRange_r\n')
                 #flowkey：键(流的对应关系port:other_host）  flowStruct：值
                 
                 #if numapp < 10:
-                #   print(flowkey,flowstruct)
+                   #print(flowkey,flowstruct)
 
                 for behavWindow in flowStruct.windows:   #BW                   
                     tmp = behavWindow.export_features(f = self.layer1_features)

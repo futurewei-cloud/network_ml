@@ -14,35 +14,50 @@ class Anonymizer:
         #anonym = Anonymizer(config_module.HOSTS_POOL, config_module.OTHERS_POOL)
 
     def add_host(self, original):   #随机生成了一个ip对应关系
+        IP_map = {}
         new_addr = self.hpool.pop()
         #pop()将列表指定位置的元素移除，不填写位置参数则默认删除最后一位
         self.map[original] = {'new' : new_addr, 'omap' : {}, 'pool' : [x for x in self.opool]}
         shuffle(self.map[original]['pool'])
-        print(original,self.map[original]['new'])
-        return new_addr   #自返回了一个原地址
+        #print(original,self.map[original]['new'])
+        IP_map[original] = self.map[original]['new']
+        return IP_map  
 
-    def anonimize(self, packet, original):   #anonimize：匿名化
-        try : hostmap = self.map[original]
-        except IndexError: raise ValueError('The host must be added before trying to anonimize')
-        #在尝试anonimize之前，必须添加主机
+    def anonimize(self, packet, host_list):   #anonimize：匿名化
 
-        if packet.ip_src == original:
+        IP_map = {}
+
+        host_list = set(host_list)
+        if(packet.ip_src in host_list):
+            original = packet.ip_src
+            try :hostmap = self.map[original]
+            except IndexError: raise ValueError('The host must be added before trying to anonimize')
+                                                    #在尝试anonimize之前，必须添加主机
             packet.ip_src = hostmap['new']
             try : packet.ip_dst = hostmap['omap'][packet.ip_dst]
-            except KeyError: # The other_host has not been seen for this host
+            except KeyError: # The other_host has not been seen for this host  说明之前没用过 new
                 other = hostmap['pool'].pop()
                 hostmap['omap'][packet.ip_dst] = other
+                IP_map[packet.ip_dst] = other
                 packet.ip_dst = other
+                
 
-        elif packet.ip_dst == original:
+        elif(packet.ip_dst in host_list):
+            original = packet.ip_dst
+            try :hostmap = self.map[original]
+            except IndexError: raise ValueError('The host must be added before trying to anonimize')
+                                                    #在尝试anonimize之前，必须添加主机
             packet.ip_dst = hostmap['new']
             try : packet.ip_src = hostmap['omap'][packet.ip_src]
             except KeyError: # The other_host has not been seen for this host
                 other = hostmap['pool'].pop()
                 hostmap['omap'][packet.ip_src] = other
+                IP_map[packet.ip_src] = other
                 packet.ip_src = other
 
-        #return packet (packet is modified by reference)
+        return IP_map
+
+
 
 class IpAnonymizer:
     def __init__(self, anonimize_private = False):

@@ -12,7 +12,9 @@
 #       在分层窗口结构中
 
 #Common path to the whole proyect
-main_path = 'G:/Anaconda/1'
+import os
+import sys
+main_path = os.path.dirname(os.getcwd())
 
 #Path to the modules folder. Must be a full path
 MODULES_PATH = '{}/modules'.format(main_path)
