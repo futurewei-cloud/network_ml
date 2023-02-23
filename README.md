@@ -1,7 +1,11 @@
 # Project Overview
-This is a repository for network machine learning project, which utilizes the recent AI model to learn and analyze network behavior, especially for network controller in the cloud environment. 
+This is a repository for network machine learning project, which utilizes the recent AI model to learn and analyze network behavior. By learning the network behavior data, the delivery of this project provides an optimal solution on network configuration in the cloud cluster. 
 
-Current topics inlcude: 
-1) User Profile Classification
-2) Configuration Prediction
-3) Model Implementation
+# Table of Contents
+## System Overview
+* Components
+* Workflow
+## Installation
+
+
+
